@@ -1,0 +1,8 @@
+db.students.update(
+    {name:'Fana'},
+    {
+        $set:{
+            gender:"F"
+        }
+    }
+)
