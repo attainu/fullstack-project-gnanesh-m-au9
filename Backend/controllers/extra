@@ -1,8 +1,11 @@
-db.students.update(
-    {name:'Fana'},
+db.subjects.update(
+    {branch:'EC'},
     {
         $set:{
-            gender:"F"
+            collegeCode:"ATT"
         }
+    },
+    {
+        multi:true
     }
 )

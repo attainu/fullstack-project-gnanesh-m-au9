@@ -7,7 +7,8 @@ var facultySchema = mongoose.Schema({
     doj:Date,
     branch:String,
     regNo:String,
-    password:String
+    password:String,
+    collegeCode:String,
 })
 
 mongoose.model('faculty',facultySchema);

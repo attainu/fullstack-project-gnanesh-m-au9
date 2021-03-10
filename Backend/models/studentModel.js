@@ -8,7 +8,8 @@ var studentSchema = mongoose.Schema({
     regNo:String,
     sem:Number,
     password:String,
-    gender:String
+    gender:String,
+    collegeCode:String,
 })
 
 mongoose.model('student',studentSchema);
