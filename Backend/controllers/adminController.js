@@ -27,12 +27,12 @@ router.use(bodyParser.json())
 
 // login
 router.post('/login',(req,res)=>{
-    Admin.findOne({regNo:req.body.regNo},(err,data)=>{
+    Admin.findOne({regNo:req.body.data.regNo},(err,data)=>{
         if(err) return res.send({auth:false,"error":"cannot login"});
         if(!data){
             return res.send({auth:false,"error":'Invalid REGISTRATION NUMBER'});
         }else{
-            var isValidPassword = bcrypt.compareSync(req.body.password,data.password)
+            var isValidPassword = bcrypt.compareSync(req.body.data.password,data.password)
             if(!isValidPassword) return res.status(500).send({auth:false,"error":"Invalid Password"})
             // generating tokens using userid,secret,expiretime
             var token = jwt.sign({id:data._id},config.secret,{expiresIn:86400});
@@ -65,18 +65,19 @@ router.post('/addstudent',(req,res)=>{
 })
 
 // get students
-router.get('/studentslist',(req,res)=>{
+router.post('/studentslist',(req,res)=>{
     // var token = req.headers['x-access-token'];
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+        // console.log(req.body)
         let student={
-            branch : req.body.branch,
-            sem : req.body.sem
+            branch : req.body.data.branch,
+            sem : req.body.data.sem
         }
         Student.find(student,(err,data)=>{
             if(err) return res.send({'error':'cannot get students'})
-            return res.send({data:data})
+            return res.send(data)
         })
     // })  
 })
@@ -104,15 +105,15 @@ router.post('/addfaculty',(req,res)=>{
 })
 
 // get faculty
-router.get('/facultylist',(req,res)=>{
+router.post('/facultylist',(req,res)=>{
     // var token = req.headers['x-access-token'];
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
-        let branch=req.body.branch
+        let branch=req.body.data.branch
         Faculty.find({branch},(err,data)=>{
             if(err) return res.send({'error':'cannot get faculty'})
-            return res.send({data:data})
+            return res.send(data)
         })
     // })
 })
@@ -137,20 +138,21 @@ router.post('/addsubject',(req,res)=>{
 })
 
 // get subject
-router.get('/subjectlist',(req,res)=>{
-    var token = req.headers['x-access-token'];
-    if(!token) return res.send({auth:false,token:'No token Provided'})
-    jwt.verify(token,config.secret,(err,data)=>{
-        if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+router.post('/subjectlist',(req,res)=>{
+    // var token = req.headers['x-access-token'];
+    // if(!token) return res.send({auth:false,token:'No token Provided'})
+    // jwt.verify(token,config.secret,(err,data)=>{
+    //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    console.log(req.body.data)
         let subject={
-            branch:req.body.branch,
-            sem:req.body.sem
+            branch:req.body.data.branch,
+            sem:req.body.data.sem
         }
         Subject.find(subject,(err,data)=>{
             if(err) return res.send({'error':'cannot get subjects'})
-            return res.send({data:data})
+            return res.send(data)
         })
-    })
+    // })
 })
 
 module.exports = router;

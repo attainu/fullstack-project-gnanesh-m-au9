@@ -5,12 +5,7 @@ var attendanceSchema = mongoose.Schema({
     sem:String,
     date:Date,
     period:Number,
-    attended:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'student'
-        }
-    ]
+    attended:Array
 })
 
 mongoose.model('attendance',attendanceSchema);
