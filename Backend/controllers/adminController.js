@@ -36,7 +36,7 @@ router.post('/login',(req,res)=>{
             if(!isValidPassword) return res.status(500).send({auth:false,"error":"Invalid Password"})
             // generating tokens using userid,secret,expiretime
             var token = jwt.sign({id:data._id},config.secret,{expiresIn:86400});
-            return res.send({auth:true,token:token})
+            return res.send({auth:true,token:token,admindata:data})
         }
     })
 })
@@ -48,15 +48,15 @@ router.post('/addstudent',(req,res)=>{
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
         Student.create({
-            name:req.body.name,
-            dob:req.body.dob,
-            admissionYear:req.body.admissionYear,
-            branch:req.body.branch,
-            regNo:req.body.regNo,
-            sem:req.body.sem,
-            password:bcrypt.hashSync(req.body.dob),
-            gender:req.body.gender,
-            collegeCode:req.body.collegeCode
+            name:req.body.data.name,
+            dob:req.body.data.dob,
+            admissionYear:req.body.data.admissionYear,
+            branch:req.body.data.branch,
+            regNo:req.body.data.regNo,
+            sem:req.body.data.sem,
+            password:bcrypt.hashSync(req.body.data.dob),
+            gender:req.body.data.gender,
+            collegeCode:req.body.data.collegeCode
         },(err,data)=>{
             if(err) return res.send({registration:'failure','error':'cannot add Student'})
             return res.send({registration:'success',message:'New Student added'})
@@ -89,14 +89,14 @@ router.post('/addfaculty',(req,res)=>{
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
         Faculty.create({
-            name:req.body.name,
-            dob:req.body.dob,
-            gender:req.body.gender,
-            doj:req.body.doj,
-            branch:req.body.branch,
-            regNo:req.body.regNo,
-            password:bcrypt.hashSync(req.body.dob),
-            collegeCode:req.body.collegeCode
+            name:req.body.data.name,
+            dob:req.body.data.dob,
+            gender:req.body.data.gender,
+            doj:req.body.data.doj,
+            branch:req.body.data.branch,
+            regNo:req.body.data.regNo,
+            password:bcrypt.hashSync(req.body.data.dob),
+            collegeCode:req.body.data.collegeCode
         },(err,data)=>{
             if(err) return res.send({registration:'failure','error':'cannot add faculty'})
             return res.send({registration:'success',message:'New Faculty added'})
@@ -120,21 +120,21 @@ router.post('/facultylist',(req,res)=>{
 
 // add Subject
 router.post('/addsubject',(req,res)=>{
-    var token = req.headers['x-access-token'];
-    if(!token) return res.send({auth:false,token:'No token Provided'})
-    jwt.verify(token,config.secret,(err,data)=>{
-        if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    // var token = req.headers['x-access-token'];
+    // if(!token) return res.send({auth:false,token:'No token Provided'})
+    // jwt.verify(token,config.secret,(err,data)=>{
+    //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
         Subject.create({
-            branch:req.body.branch,
-            sem:req.body.sem,
-            subName:req.body.subName,
-            subCode:req.body.subCode,
-            collegeCode:req.body.collegeCode
+            branch:req.body.data.branch,
+            sem:req.body.data.sem,
+            subName:req.body.data.subName,
+            subCode:req.body.data.subCode,
+            collegeCode:req.body.data.collegeCode
         },(err,data)=>{
             if(err) return res.send({registration:'failure','error':'cannot add Subject'})
             return res.send({registration:'success',message:'New Subject added'})
         })
-    })
+    // })
 })
 
 // get subject
@@ -143,7 +143,7 @@ router.post('/subjectlist',(req,res)=>{
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
-    console.log(req.body.data)
+    // console.log(req.body.data)
         let subject={
             branch:req.body.data.branch,
             sem:req.body.data.sem
@@ -153,6 +153,40 @@ router.post('/subjectlist',(req,res)=>{
             return res.send(data)
         })
     // })
+})
+
+// add admin
+router.post('/addadmin',(req,res)=>{
+    // var token = req.headers['x-access-token'];
+    // if(!token) return res.send({auth:false,token:'No token Provided'})
+    // jwt.verify(token,config.secret,(err,data)=>{
+    //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+            Admin.create({
+                name:req.body.data.name,
+                regNo:req.body.data.regNo,
+                dob:req.body.data.dob,
+                password:bcrypt.hashSync(req.body.data.dob),
+                branch:req.body.data.branch,
+                collegeCode:req.body.data.collegeCode
+            },(err,user)=>{
+                if(err) throw err;
+                return res.status(200).send({'register':'success','message':'Admin Register successfully'});
+            })
+    // }) 
+})
+
+// get Admins list
+router.get('/adminslist',(req,res)=>{
+    // var token = req.headers['x-access-token'];
+    // if(!token) return res.send({auth:false,token:'No token Provided'})
+    // jwt.verify(token,config.secret,(err,data)=>{
+    //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+        // console.log(req.body)
+        Admin.find({},(err,data)=>{
+            if(err) return res.send({'error':'cannot get admins'})
+            return res.send(data)
+        })
+    // })  
 })
 
 module.exports = router;

@@ -14,7 +14,7 @@ const AdminHeader=()=>{
             </Nav>
         </Navbar> */}
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-  <Navbar.Brand href="/">Admin</Navbar.Brand>
+  <Navbar.Brand href="/adminprofile">Admin</Navbar.Brand>
   <Navbar.Toggle aria-controls="responsive-navbar-nav" />
   <Navbar.Collapse id="responsive-navbar-nav">
     <Nav className="mr-auto">
@@ -24,7 +24,8 @@ const AdminHeader=()=>{
       <Nav.Link href="/getfaculty">Get Faculty</Nav.Link>
       <Nav.Link href="/addsubject">Add Subject</Nav.Link>
       <Nav.Link href="/getsubject">Get Subject</Nav.Link>
-      
+      <Nav.Link href="/addadmin">Add Admin</Nav.Link>
+      <Nav.Link href="/getadmin">Get Admin</Nav.Link>
     </Nav>
     <Nav>
       <Nav.Link href="/">Log out</Nav.Link>

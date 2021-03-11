@@ -18,8 +18,10 @@ const AdminHome = () => {
         // console.log(user)
        axios.post('http://localhost:5000/admin/login',{data:user}) 
        .then((res)=>{
-           sessionStorage.setItem('_ltk',res.data.token);
+           sessionStorage.setItem('token',res.data.token);
+		   sessionStorage.setItem('userdata',res.data.admindata);
            console.log(res.data.token)
+		   console.log(res.data.admindata)
            history.push('/adminprofile');
         //    console.log(res.data.token)
        })

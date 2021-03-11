@@ -1,6 +1,8 @@
 import AdminHeader from './AdminHeader';
 import {Form,Container,Row,Col,Button} from 'react-bootstrap';
 import {useState} from 'react';
+import axios from 'axios';
+import {useHistory} from 'react-router-dom';
 
 const AddStudent = () => {
     const [name,setname]=useState();
@@ -11,6 +13,8 @@ const AddStudent = () => {
     const [sem,setsem]=useState();
     const [gender,setgender]=useState();
     const [collegeCode,setcollegeCode]=useState();
+
+   let history = useHistory();
 
     const submitHandler=(event)=>{
         event.preventDefault();
@@ -24,7 +28,12 @@ const AddStudent = () => {
             gender:gender,
             collegeCode:collegeCode
         }
-        console.log(studentdetails)
+        // console.log(studentdetails)
+         axios.post('http://localhost:5000/admin/addstudent',{data:studentdetails})
+        .then((res)=>{
+            alert('New Student Added Succesfuly');
+            history.push('/adminprofile');
+        })
     }
 
     return(
