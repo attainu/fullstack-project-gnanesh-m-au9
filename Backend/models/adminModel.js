@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 //what kind of fields will be there in collections
 var adminSchema  = new mongoose.Schema({
     regNo:String,
-    dob:Date,
+    dob:String,
     name:String,
     branch:String,
     password:String,

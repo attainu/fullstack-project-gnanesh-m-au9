@@ -4,7 +4,7 @@ var facultySchema = mongoose.Schema({
     name:String,
     dob:Date,
     gender:String,
-    doj:Date,
+    doj:String,
     branch:String,
     regNo:String,
     password:String,

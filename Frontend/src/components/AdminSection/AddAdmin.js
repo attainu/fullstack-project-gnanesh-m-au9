@@ -10,6 +10,7 @@ const AddAdmin = () => {
     const [dob,setdob]=useState();
     const [branch,setbranch]=useState();
     const [collegeCode,setcollegeCode]=useState();
+    const[errormessage,seterrormessage]=useState();
 
    let history = useHistory();
 
@@ -28,6 +29,9 @@ const AddAdmin = () => {
             alert('New Admin Added Succesfuly');
             history.push('/adminprofile');
         })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
+        })
     }
 
     return(
@@ -36,6 +40,7 @@ const AddAdmin = () => {
         <Container>
         <h1>Add Subject</h1>
         <br/>
+        <h2 style={{color:"red"}}>{errormessage}</h2>
         <Form onSubmit={submitHandler}>
             <Row>
                 <Col sm={5}>

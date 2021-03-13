@@ -10,7 +10,6 @@ import GetStudent from './AdminSection/GetStudent';
 import GetSubject from './AdminSection/GetSubject';
 import GetAdmin from './AdminSection/GetAdmin';
 
-
 const Routing = ()=>{   
     return(
         <>

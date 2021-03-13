@@ -1,8 +1,8 @@
-db.subjects.update(
-    {branch:'EC'},
+db.faculties.update(
+    {collegeCode:'ATT'},
     {
         $set:{
-            collegeCode:"ATT"
+            dob:"2021-01-01"
         }
     },
     {

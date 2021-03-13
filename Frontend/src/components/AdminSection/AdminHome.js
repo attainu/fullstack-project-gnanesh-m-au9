@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 const AdminHome = () => {
     const [regNo,setregNo]=useState();
     const [password,setpassword]=useState();
-    const [error,seterror]=useState();
+    const [errormessage,seterrormessage]=useState();
 
     let history = useHistory()
 
@@ -19,14 +19,14 @@ const AdminHome = () => {
        axios.post('http://localhost:5000/admin/login',{data:user}) 
        .then((res)=>{
            sessionStorage.setItem('token',res.data.token);
-		   sessionStorage.setItem('userdata',res.data.admindata);
-           console.log(res.data.token)
-		   console.log(res.data.admindata)
+		   const adminRegNumber = res.data.admindata.regNo
+		   sessionStorage.setItem('userdata',JSON.stringify(res.data.admindata));
            history.push('/adminprofile');
-        //    console.log(res.data.token)
        })
        .catch((err)=>{
-            seterror('Invalid username or password')
+		   if(err){
+				seterrormessage(err.response.data.message)
+		   }
        })
     }
     return(
@@ -35,7 +35,7 @@ const AdminHome = () => {
 			<div className="wrap-login100">
 				<form className="login100-form validate-form" onSubmit={handleSubmit}>
                     {/* if login fails, we can show message here */}
-                    <span><h2>{error}</h2></span>
+                    <h3 style={{color:'red'}}>{errormessage}</h3>
 					<span className="login100-form-title p-b-34">
 						Admin Login
 					</span>

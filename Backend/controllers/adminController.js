@@ -25,21 +25,47 @@ router.use(bodyParser.json())
 //     })
 // })
 
+
 // login
 router.post('/login',(req,res)=>{
     Admin.findOne({regNo:req.body.data.regNo},(err,data)=>{
-        if(err) return res.send({auth:false,"error":"cannot login"});
+        if(err) return res.status(500).send({"message":"cannot login"});
         if(!data){
-            return res.send({auth:false,"error":'Invalid REGISTRATION NUMBER'});
+            return res.status(400).send({"message":'Invalid REGISTRATION NUMBER'});
         }else{
             var isValidPassword = bcrypt.compareSync(req.body.data.password,data.password)
-            if(!isValidPassword) return res.status(500).send({auth:false,"error":"Invalid Password"})
+            if(!isValidPassword) return res.status(400).send({"message":"Invalid Password"})
             // generating tokens using userid,secret,expiretime
             var token = jwt.sign({id:data._id},config.secret,{expiresIn:86400});
-            return res.send({auth:true,token:token,admindata:data})
+            return res.send({token:token,admindata:data})
         }
     })
 })
+
+// admin update password
+
+
+// Admin update profile
+// important:dont use postman to update profile, it may make other fields null, if we dont pass values 
+// from postman
+router.put('/updateadmin',(req,res)=>{
+    let regNo=req.body.regNo;
+    Admin.updateMany(
+        {regNo:regNo},
+        {
+            $set:{
+                name:req.body.name,
+                dob:req.body.dob,
+                branch:req.body.branch,
+                collegeCode:req.body.collegeCode
+            }
+        },
+        (err,data)=>{
+            if(err) return res.status(400).send({'message':'cant update Admin'})
+            return res.send({'message':'Admin profile updated'});
+        })
+    })
+
 
 // add students
 router.post('/addstudent',(req,res)=>{
@@ -47,19 +73,23 @@ router.post('/addstudent',(req,res)=>{
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
-        Student.create({
-            name:req.body.data.name,
-            dob:req.body.data.dob,
-            admissionYear:req.body.data.admissionYear,
-            branch:req.body.data.branch,
-            regNo:req.body.data.regNo,
-            sem:req.body.data.sem,
-            password:bcrypt.hashSync(req.body.data.dob),
-            gender:req.body.data.gender,
-            collegeCode:req.body.data.collegeCode
-        },(err,data)=>{
-            if(err) return res.send({registration:'failure','error':'cannot add Student'})
-            return res.send({registration:'success',message:'New Student added'})
+        Student.findOne({regNo:req.body.data.regNo},(err,data)=>{
+            if(err) return res.status(400).send({'message':'cannot add student'})
+            if(data) return res.status(400).send({'message':'student with given ID is already present'})
+            Student.create({
+                name:req.body.data.name,
+                dob:req.body.data.dob,
+                admissionYear:req.body.data.admissionYear,
+                branch:req.body.data.branch,
+                regNo:req.body.data.regNo,
+                sem:req.body.data.sem,
+                password:bcrypt.hashSync(req.body.data.dob),
+                gender:req.body.data.gender,
+                collegeCode:req.body.data.collegeCode
+            },(err,data)=>{
+                if(err) return res.status(500).send({'error':'cannot add Student'})
+                return res.send({message:'New Student added'})
+            })
         })
     // }) 
 })
@@ -75,8 +105,8 @@ router.post('/studentslist',(req,res)=>{
             branch : req.body.data.branch,
             sem : req.body.data.sem
         }
-        Student.find(student,(err,data)=>{
-            if(err) return res.send({'error':'cannot get students'})
+        Student.find(student,{password:0},(err,data)=>{
+            if(err) return res.status(500).send({'message':'cannot get students'})
             return res.send(data)
         })
     // })  
@@ -88,6 +118,9 @@ router.post('/addfaculty',(req,res)=>{
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    Faculty.findOne({regNo:req.body.data.regNo},(err,data)=>{
+        if(err) return res.status(400).send({'message':'cannot add Faculty'})
+        if(data) return res.status(400).send({'message':'Faculty with given ID is already present'})
         Faculty.create({
             name:req.body.data.name,
             dob:req.body.data.dob,
@@ -98,10 +131,11 @@ router.post('/addfaculty',(req,res)=>{
             password:bcrypt.hashSync(req.body.data.dob),
             collegeCode:req.body.data.collegeCode
         },(err,data)=>{
-            if(err) return res.send({registration:'failure','error':'cannot add faculty'})
-            return res.send({registration:'success',message:'New Faculty added'})
+            if(err) return res.status(500).send({'message':'cannot add faculty'})
+            return res.send({'message':'New Faculty added'})
         })
     // })
+    })
 })
 
 // get faculty
@@ -111,8 +145,8 @@ router.post('/facultylist',(req,res)=>{
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
         let branch=req.body.data.branch
-        Faculty.find({branch},(err,data)=>{
-            if(err) return res.send({'error':'cannot get faculty'})
+        Faculty.find({branch},{password:0},(err,data)=>{
+            if(err) return res.status(500).send({'message':'cannot get faculty'})
             return res.send(data)
         })
     // })
@@ -124,6 +158,9 @@ router.post('/addsubject',(req,res)=>{
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    Subject.findOne({subCode:req.body.data.subCode},(err,data)=>{
+        if(err) return res.status(400).send({'message':'cannot add Subject'})
+        if(data) return res.status(400).send({'message':'Subject with given Code is already present'})
         Subject.create({
             branch:req.body.data.branch,
             sem:req.body.data.sem,
@@ -131,10 +168,11 @@ router.post('/addsubject',(req,res)=>{
             subCode:req.body.data.subCode,
             collegeCode:req.body.data.collegeCode
         },(err,data)=>{
-            if(err) return res.send({registration:'failure','error':'cannot add Subject'})
-            return res.send({registration:'success',message:'New Subject added'})
+            if(err) return res.status(500).send({'message':'cannot add Subject'})
+            return res.send({message:'New Subject added'})
         })
     // })
+    })
 })
 
 // get subject
@@ -149,7 +187,7 @@ router.post('/subjectlist',(req,res)=>{
             sem:req.body.data.sem
         }
         Subject.find(subject,(err,data)=>{
-            if(err) return res.send({'error':'cannot get subjects'})
+            if(err) return res.status(500).send({'message':'cannot get subjects'})
             return res.send(data)
         })
     // })
@@ -161,6 +199,9 @@ router.post('/addadmin',(req,res)=>{
     // if(!token) return res.send({auth:false,token:'No token Provided'})
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    Admin.findOne({regNo:req.body.data.regNo},(err,data)=>{
+        if(err) return res.status(400).send({'message':'cannot add Admin'})
+        if(data) return res.status(400).send({'message':'Admin with given Code is already present'})
             Admin.create({
                 name:req.body.data.name,
                 regNo:req.body.data.regNo,
@@ -169,10 +210,11 @@ router.post('/addadmin',(req,res)=>{
                 branch:req.body.data.branch,
                 collegeCode:req.body.data.collegeCode
             },(err,user)=>{
-                if(err) throw err;
+                if(err) return res.status(500).send({message:'cannot add admin'});
                 return res.status(200).send({'register':'success','message':'Admin Register successfully'});
             })
     // }) 
+    })
 })
 
 // get Admins list
@@ -182,11 +224,19 @@ router.get('/adminslist',(req,res)=>{
     // jwt.verify(token,config.secret,(err,data)=>{
     //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
         // console.log(req.body)
-        Admin.find({},(err,data)=>{
-            if(err) return res.send({'error':'cannot get admins'})
+        Admin.find({},{password:0},(err,data)=>{
+            if(err) return res.status(500).send({'message':'cannot get admins'})
             return res.send(data)
         })
     // })  
+})
+
+// get admin by his registration number
+router.get('/adminbyid/:id',(req,res)=>{
+    Admin.findOne({regNo:req.params.id},(err,data)=>{
+        if(err) return res.status(500).send({'message':'cannnot find admin'})
+        return res.send(data)
+    })
 })
 
 module.exports = router;

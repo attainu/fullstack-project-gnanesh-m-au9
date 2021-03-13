@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var attendanceSchema = mongoose.Schema({
     branch:String,
     sem:String,
-    date:Date,
+    date:String,
     period:Number,
     attended:Array
 })

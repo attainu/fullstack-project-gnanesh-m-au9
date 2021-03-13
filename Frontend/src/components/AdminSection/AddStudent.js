@@ -13,6 +13,7 @@ const AddStudent = () => {
     const [sem,setsem]=useState();
     const [gender,setgender]=useState();
     const [collegeCode,setcollegeCode]=useState();
+    const[errormessage,seterrormessage]=useState();
 
    let history = useHistory();
 
@@ -34,13 +35,19 @@ const AddStudent = () => {
             alert('New Student Added Succesfuly');
             history.push('/adminprofile');
         })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
+        })
     }
 
     return(
         <>
         <AdminHeader/>
         <Container>
+        
         <h1>Add Student</h1>
+        <br/>
+        <h2 style={{color:"red"}}>{errormessage}</h2>
         <br/>
         <Form onSubmit={submitHandler}>
             <Row>
@@ -54,24 +61,30 @@ const AddStudent = () => {
                             <Form.Control type="date" placeholder="Student DOB" onChange={(e)=>setdob(e.target.value)} />
                     </Form.Group> 
                     <Form.Group>
-                            <Form.Label>Admission Year</Form.Label>
-                            <Form.Control type="number" placeholder="Admission Year" onChange={(e)=>setadmissionYear(e.target.value)} />
+                        <Form.Label>Admission Year</Form.Label>
+                            <select className="form-control" onChange={(e)=>setadmissionYear(parseInt(e.target.value))}>
+                                <option>----SELECT ADMISSION YEAR-----</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                            </select>
                     </Form.Group> 
                     <Form.Group>
-                            <Form.Label>Select Branch:</Form.Label>
-                                <select className="form-control" onChange={(e)=>setbranch(e.target.value)}>
-                                    <option>----SELECT BRANCH-----</option>
-                                    <option value="CSE">CSE</option>
-                                    <option value="MECH">MECH</option>
-                                    <option value="CIVIL">CIVIL</option>
-                                    <option value="EC">ECE</option>
-                                </select>
+                        <Form.Label>Select Branch:</Form.Label>
+                            <select className="form-control" onChange={(e)=>setbranch(e.target.value)}>
+                                <option>----SELECT BRANCH-----</option>
+                                <option value="CSE">CSE</option>
+                                <option value="MECH">MECH</option>
+                                <option value="CIVIL">CIVIL</option>
+                                <option value="EC">ECE</option>
+                            </select>
                     </Form.Group>
                 </Col>
                 <Col sm={5}>
                     <Form.Group>
-                            <Form.Label>Registration Number</Form.Label>
-                            <Form.Control type="text" placeholder="Registration Number" onChange={(e)=>setregNo(e.target.value)} />
+                        <Form.Label>Registration Number</Form.Label>
+                        <Form.Control type="text" placeholder="Registration Number" onChange={(e)=>setregNo(e.target.value)} />
                     </Form.Group> 
                     <Form.Group>
                         <Form.Label>Select Semester:</Form.Label>

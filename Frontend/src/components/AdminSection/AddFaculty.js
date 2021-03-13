@@ -12,6 +12,7 @@ const AddFaculty = () => {
     const [branch,setbranch]=useState();
     const [regNo,setregNo]=useState();
     const [collegeCode,setcollegeCode]=useState();
+    const[errormessage,seterrormessage]=useState();
 
    let history = useHistory();
 
@@ -32,6 +33,9 @@ const AddFaculty = () => {
             alert('New Faculty Added Succesfuly');
             history.push('/adminprofile');
         })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
+        })
     }
 
     return(
@@ -40,6 +44,7 @@ const AddFaculty = () => {
         <Container>
         <h1>Add Faculty</h1>
         <br/>
+        <h2 style={{color:"red"}}>{errormessage}</h2>
         <Form onSubmit={submitHandler}>
             <Row>
                 <Col sm={5}>
