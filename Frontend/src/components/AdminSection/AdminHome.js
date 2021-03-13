@@ -9,25 +9,23 @@ const AdminHome = () => {
 
     let history = useHistory()
 
-    const handleSubmit=(event)=>{
+    const handleSubmit= async (event)=>{
         event.preventDefault();
         const user={
             regNo:regNo,
             password:password
         }
         // console.log(user)
-       axios.post('http://localhost:5000/admin/login',{data:user}) 
+       await axios.post('http://localhost:5000/admin/login',{data:user}) 
        .then((res)=>{
            sessionStorage.setItem('token',res.data.token);
 		   const adminRegNumber = res.data.admindata.regNo
-		   sessionStorage.setItem('userdata',JSON.stringify(res.data.admindata));
+		   sessionStorage.setItem('adminregNo',JSON.stringify(adminRegNumber));
            history.push('/adminprofile');
        })
-       .catch((err)=>{
-		   if(err){
-				seterrormessage(err.response.data.message)
-		   }
-       })
+	   .catch((err)=>{
+		   seterrormessage(err.response.data.message)
+	   })
     }
     return(
         <div className="limiter">

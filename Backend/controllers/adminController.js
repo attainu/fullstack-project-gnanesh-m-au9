@@ -4,14 +4,16 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('./config');
+// const expressUpload = require('express-fileupload');
 const Admin = require('../models/adminModel');
 const Student = require('../models/studentModel');
 const Faculty = require('../models/facultyModel');
 const Subject = require('../models/subjectModel');
+const multer = require('multer');
 
 router.use(bodyParser.urlencoded({extended:true}))
 router.use(bodyParser.json())
-
+// router.use(expressUpload());
 // registration
 // router.post('/register',(req,res)=>{
 //     var enteredPassword = bcrypt.hashSync(req.body.password);
@@ -237,6 +239,19 @@ router.get('/adminbyid/:id',(req,res)=>{
         if(err) return res.status(500).send({'message':'cannnot find admin'})
         return res.send(data)
     })
+})
+
+//  Update profile picture
+const upload = multer();
+router.post('/updateadminpic',upload.single("profilepic"),(req,res)=>{
+    console.log(req.file)
+    // const imageFile = req.files.avatar;
+    // imageFile.mv(`${__dirname}/public/images/${imageFile.name}`,(err,data)=>{
+    //     if(err) throw err;
+    //     return res.render('imageDisplay',{image:`${imageFile.name}`})
+    // })
+
+    console.log('Hey')
 })
 
 module.exports = router;

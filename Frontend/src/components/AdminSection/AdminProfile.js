@@ -5,22 +5,35 @@ import axios from 'axios';
 
 const AdminProfile = () => {
 
-    const adminInfo = JSON.parse(sessionStorage.getItem('userdata'))
+    const adminregNo = JSON.parse(sessionStorage.getItem('adminregNo'))
     
-    const [userData]=useState(adminInfo);
-    const [regNo]=useState(adminInfo.regNo);
-    const [name,setname]=useState(adminInfo.name);
-    const[dob,setdob]=useState(adminInfo.dob);
-    const[branch,setbranch]=useState(adminInfo.branch);
-    const[collegeCode,setcollegeCode]=useState(adminInfo.collegeCode);
+    const [regNo]=useState(adminregNo);
+    const [name,setname]=useState();
+    const[dob,setdob]=useState();
+    const[branch,setbranch]=useState();
+    const[collegeCode,setcollegeCode]=useState();
+    const[profilepic,setprofilepic]=useState();
     
+    useEffect(()=>{
+        axios.get(`http://localhost:5000/admin/adminbyid/${regNo}`)
+        .then((res)=>{
+            setname(res.data.name)
+            setdob(res.data.dob)
+            setbranch(res.data.branch)
+            setcollegeCode(res.data.collegeCode)
+        })
+    },[]);
+
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false);
+        window.location.reload();
+    }
 
     const handleShow = (regNo) =>{
         setShow(true);
     }
-    const handleSubmit=(event)=>{
+    const handleSubmit=async(event)=>{
         event.preventDefault();
         const adminUpdatedDetails={
             regNo:regNo,
@@ -29,9 +42,23 @@ const AdminProfile = () => {
             branch:branch,
             collegeCode:collegeCode
         }
-        axios.put('http://localhost:5000/admin/updateadmin',adminUpdatedDetails)
+        await axios.put('http://localhost:5000/admin/updateadmin',adminUpdatedDetails)
         .then((res)=>{
-            window.location.reload()
+            window.location.reload();
+        })
+    }
+
+    const submitProfilePic = (event) => {
+        event.preventDefault();
+        // console.log(profilepic)
+        const data = new FormData();
+        data.append('profilepic',profilepic)
+        axios.post('http://localhost:5000/admin/updateadminpic',data)
+        .then((res)=>{
+            console.log(res)
+        })
+        .then((err)=>{
+            console.log(err)
         })
     }
 
@@ -51,9 +78,10 @@ const AdminProfile = () => {
                                      <img src="/assets/images/avatar.png" alt="avatar"/>
                                  </Card.Body>
                                  <Card.Footer>
-                                     <Form>
-                                     <Form.Label>Upload Image</Form.Label>
-                                         <input type="file" name="avatar" style={{cursor:"pointer"}}/>
+                                     <Form onSubmit={submitProfilePic}>
+                                        <input type="file" name="avatar" style={{cursor:"pointer"}} onChange={(e)=>setprofilepic(e.target.files[0])} />
+                                        <br/><br/>
+                                        <Button type="submit">Update Pic</Button>
                                      </Form>
                                  </Card.Footer>
                              </Card>
@@ -64,27 +92,27 @@ const AdminProfile = () => {
                              <tbody>
                                  <tr>
                                      <td colSpan="2">Name</td>
-                                     <td>{userData.name}</td>
+                                     <td>{name}</td>
                                  </tr>
 
                                  <tr>
                                      <td colSpan="2">Reg Number</td>
-                                     <td>{userData.regNo}</td>
+                                     <td>{regNo}</td>
                                  </tr>
                                  <tr>
                                      <td colSpan="2">DOB</td>
-                                     <td>{userData.dob}</td>
+                                     <td>{dob}</td>
                                  </tr>
                                  <tr>
                                      <td colSpan="2">Branch</td>
-                                     <td>{userData.branch}</td>
+                                     <td>{branch}</td>
                                  </tr>
                                  <tr>
                                      <td colSpan="2">College Code</td>
-                                     <td>{userData.collegeCode}</td>
+                                     <td>{collegeCode}</td>
                                  </tr>
                                  <center>
-                                     <Button style={{margin:"1.5rem"}} variant="primary" onClick={()=>{handleShow(userData.regNo)}}>Update Profile</Button>&nbsp;
+                                     <Button style={{margin:"1.5rem"}} variant="primary" onClick={()=>{handleShow(regNo)}}>Update Profile</Button>&nbsp;
                                  </center>
                              </tbody>
                          </Table>
