@@ -51,7 +51,7 @@ const AddStudent = () => {
         <br/>
         <Form onSubmit={submitHandler}>
             <Row>
-                <Col sm={5}>
+                <Col>
                     <Form.Group>
                             <Form.Label>Student Name</Form.Label>
                             <Form.Control type="text" placeholder="Student Name" onChange={(e)=>setname(e.target.value)} />
@@ -81,7 +81,7 @@ const AddStudent = () => {
                             </select>
                     </Form.Group>
                 </Col>
-                <Col sm={5}>
+                <Col>
                     <Form.Group>
                         <Form.Label>Registration Number</Form.Label>
                         <Form.Control type="text" placeholder="Registration Number" onChange={(e)=>setregNo(e.target.value)} />

@@ -4,16 +4,16 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('./config');
-// const expressUpload = require('express-fileupload');
 const Admin = require('../models/adminModel');
 const Student = require('../models/studentModel');
 const Faculty = require('../models/facultyModel');
 const Subject = require('../models/subjectModel');
-const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 router.use(bodyParser.urlencoded({extended:true}))
 router.use(bodyParser.json())
-// router.use(expressUpload());
+
 // registration
 // router.post('/register',(req,res)=>{
 //     var enteredPassword = bcrypt.hashSync(req.body.password);
@@ -36,7 +36,7 @@ router.post('/login',(req,res)=>{
             return res.status(400).send({"message":'Invalid REGISTRATION NUMBER'});
         }else{
             var isValidPassword = bcrypt.compareSync(req.body.data.password,data.password)
-            if(!isValidPassword) return res.status(400).send({"message":"Invalid Password"})
+            if(!isValidPassword) return res.status(400).send("Invalid Password")
             // generating tokens using userid,secret,expiretime
             var token = jwt.sign({id:data._id},config.secret,{expiresIn:86400});
             return res.send({token:token,admindata:data})
@@ -59,7 +59,8 @@ router.put('/updateadmin',(req,res)=>{
                 name:req.body.name,
                 dob:req.body.dob,
                 branch:req.body.branch,
-                collegeCode:req.body.collegeCode
+                collegeCode:req.body.collegeCode,
+                // avatar:req.file.path
             }
         },
         (err,data)=>{
@@ -71,10 +72,11 @@ router.put('/updateadmin',(req,res)=>{
 
 // add students
 router.post('/addstudent',(req,res)=>{
-    // var token = req.headers['x-access-token'];
-    // if(!token) return res.send({auth:false,token:'No token Provided'})
-    // jwt.verify(token,config.secret,(err,data)=>{
-    //     if(err) return res.status(500).send({auth:false,'error':'Invalid token'})
+    var token = req.headers['x-access-token'];
+    if(!token) return res.send({message:'No token Provided'})
+    jwt.verify(token,config.secret,(err,data)=>{
+        if(err) return res.status(500).send({'message':'Invalid token'})
+        
         Student.findOne({regNo:req.body.data.regNo},(err,data)=>{
             if(err) return res.status(400).send({'message':'cannot add student'})
             if(data) return res.status(400).send({'message':'student with given ID is already present'})
@@ -93,7 +95,7 @@ router.post('/addstudent',(req,res)=>{
                 return res.send({message:'New Student added'})
             })
         })
-    // }) 
+    }) 
 })
 
 // get students
@@ -242,16 +244,30 @@ router.get('/adminbyid/:id',(req,res)=>{
 })
 
 //  Update profile picture
-const upload = multer();
-router.post('/updateadminpic',upload.single("profilepic"),(req,res)=>{
-    console.log(req.file)
-    // const imageFile = req.files.avatar;
-    // imageFile.mv(`${__dirname}/public/images/${imageFile.name}`,(err,data)=>{
-    //     if(err) throw err;
-    //     return res.render('imageDisplay',{image:`${imageFile.name}`})
-    // })
-
-    console.log('Hey')
+router.post('/updateadminpic',(req,res)=>{
+    Admin.uploadedAvatar(req,res,function(err){
+        if(err) throw err;
+        let regNo = req.body.regNo;
+        Admin.findOne({regNo:regNo},(err,data)=>{
+            
+            if(req.file){
+                if(data.avatar){
+                    fs.unlinkSync(path.join(__dirname,"..",data.avatar))
+                }
+                data.avatar=Admin.avatarPath +'/'+ req.file.filename;
+                data.save()
+                    .then(doc=>{
+                        res.status(201).json({
+                            message:'Profile image updated succesfully',
+                            results:doc
+                        });
+                    })
+                    .catch(err=>{
+                        res.json(err)
+                    })
+                }
+           })
+    })
 })
 
 module.exports = router;

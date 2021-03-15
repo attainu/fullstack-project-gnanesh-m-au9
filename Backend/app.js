@@ -18,6 +18,8 @@ app.use('/student',StudentController);
 const facultyController = require('./controllers/facultyController');
 app.use('/faculty',facultyController);
 
+app.use('/uploads',express.static(__dirname+'/uploads'));
+
 app.listen(port,(err)=>{
     if(err) throw err;
     console.log(`Server is running at port:${port}`)

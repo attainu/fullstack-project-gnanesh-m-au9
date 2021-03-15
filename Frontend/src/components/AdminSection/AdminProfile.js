@@ -2,6 +2,7 @@ import AdminHeader from './AdminHeader';
 import {Container,Row,Col,Card,Button,Table,Form,Modal} from 'react-bootstrap';
 import {useState,useEffect} from 'react';
 import axios from 'axios';
+import DefaultUserPic from "../uploads/avatar.png";
 
 const AdminProfile = () => {
 
@@ -13,6 +14,8 @@ const AdminProfile = () => {
     const[branch,setbranch]=useState();
     const[collegeCode,setcollegeCode]=useState();
     const[profilepic,setprofilepic]=useState();
+    const[uploadedPic,setuploadedPic]=useState();
+
     
     useEffect(()=>{
         axios.get(`http://localhost:5000/admin/adminbyid/${regNo}`)
@@ -21,8 +24,16 @@ const AdminProfile = () => {
             setdob(res.data.dob)
             setbranch(res.data.branch)
             setcollegeCode(res.data.collegeCode)
+            setprofilepic(res.data.avatar)
         })
     },[]);
+
+    // if profile pic is not there, it will get default profile pic
+    if(profilepic){
+        var AdminProfilPic = "http://localhost:5000"+profilepic;
+    }else{
+        AdminProfilPic = DefaultUserPic
+    }
 
     const [show, setShow] = useState(false);
     const handleClose = () => {
@@ -40,7 +51,8 @@ const AdminProfile = () => {
             name:name,
             dob:dob,
             branch:branch,
-            collegeCode:collegeCode
+            collegeCode:collegeCode,
+            // uploadedPic:uploadedPic
         }
         await axios.put('http://localhost:5000/admin/updateadmin',adminUpdatedDetails)
         .then((res)=>{
@@ -52,12 +64,15 @@ const AdminProfile = () => {
         event.preventDefault();
         // console.log(profilepic)
         const data = new FormData();
-        data.append('profilepic',profilepic)
+        data.append('adminpic',uploadedPic)
+        data.append('regNo',regNo)
+        // console.log(data)
         axios.post('http://localhost:5000/admin/updateadminpic',data)
         .then((res)=>{
             console.log(res)
+            setprofilepic(res.data.results.avatar)
         })
-        .then((err)=>{
+        .catch((err)=>{
             console.log(err)
         })
     }
@@ -75,11 +90,11 @@ const AdminProfile = () => {
                              <Card border="primary" style={{ width: '18rem',backgroundColor:'skyblue' }}>
                                  <Card.Header>Profile Picture</Card.Header>
                                  <Card.Body>
-                                     <img src="/assets/images/avatar.png" alt="avatar"/>
+                                     <img src={AdminProfilPic} width="100%" height="100%" alt="avatar"/>
                                  </Card.Body>
                                  <Card.Footer>
-                                     <Form onSubmit={submitProfilePic}>
-                                        <input type="file" name="avatar" style={{cursor:"pointer"}} onChange={(e)=>setprofilepic(e.target.files[0])} />
+                                     <Form onSubmit={submitProfilePic} enctype="multipart/form-data" >
+                                        <input type="file" name="adminpic" style={{cursor:"pointer"}} onChange={(e)=>setuploadedPic(e.target.files[0])} />
                                         <br/><br/>
                                         <Button type="submit">Update Pic</Button>
                                      </Form>
@@ -129,6 +144,11 @@ const AdminProfile = () => {
                          <Form.Group>
                              <Form.Label>Admin Reg Number</Form.Label>
                              <Form.Control type="text" value={regNo} readOnly />
+                         </Form.Group> 
+
+                         <Form.Group>
+                            <Form.Label>Profile Pic</Form.Label>
+                            <input type="file" name="adminpic" style={{cursor:"pointer"}} onChange={(e)=>setuploadedPic(e.target.files[0])} />
                          </Form.Group> 
 
                          <Form.Group>

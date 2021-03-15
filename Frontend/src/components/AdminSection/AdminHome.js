@@ -24,7 +24,10 @@ const AdminHome = () => {
            history.push('/adminprofile');
        })
 	   .catch((err)=>{
-		   seterrormessage(err.response.data.message)
+		   if(err){
+				seterrormessage(err.response.data)
+		   }
+		   return;
 	   })
     }
     return(

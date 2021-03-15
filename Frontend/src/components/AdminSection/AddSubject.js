@@ -43,7 +43,7 @@ const AddSubject = () => {
         <h2 style={{color:"red"}}>{errormessage}</h2>
         <Form onSubmit={submitHandler}>
             <Row>
-                <Col sm={5}>
+                <Col>
                    
                     <Form.Group>
                             <Form.Label>Select Branch:</Form.Label>
@@ -72,7 +72,7 @@ const AddSubject = () => {
                             <Form.Control type="text" placeholder="Subject Name" onChange={(e)=>setsubName(e.target.value)} />
                     </Form.Group> 
                 </Col>
-                <Col sm={5}>
+                <Col>
                     <Form.Group>
                             <Form.Label>Subject Code</Form.Label>
                             <Form.Control type="text" placeholder="Subject Code" onChange={(e)=>setsubCode(e.target.value)} />

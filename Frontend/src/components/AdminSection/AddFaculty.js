@@ -47,7 +47,7 @@ const AddFaculty = () => {
         <h2 style={{color:"red"}}>{errormessage}</h2>
         <Form onSubmit={submitHandler}>
             <Row>
-                <Col sm={5}>
+                <Col>
                     <Form.Group>
                             <Form.Label>Faculty Name</Form.Label>
                             <Form.Control type="text" placeholder="Faculty Name" onChange={(e)=>setname(e.target.value)} />
@@ -80,7 +80,7 @@ const AddFaculty = () => {
                                 </select>
                     </Form.Group>
                 </Col>
-                <Col sm={5}>
+                <Col>
                     <Form.Group>
                             <Form.Label>Registration Number</Form.Label>
                             <Form.Control type="text" placeholder="Registration Number" onChange={(e)=>setregNo(e.target.value)} />
