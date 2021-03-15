@@ -25,7 +25,7 @@ const AdminHome = () => {
        })
 	   .catch((err)=>{
 		   if(err){
-				seterrormessage(err.response.data)
+				seterrormessage(err.response.data.message)
 		   }
 		   return;
 	   })

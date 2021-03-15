@@ -5,7 +5,11 @@ var studentSchema = mongoose.Schema({
     dob:String,
     admissionYear:Number,
     branch:String,
-    regNo:String,
+    regNo:{
+        type:String,
+        unique:true
+
+    },
     sem:Number,
     password:String,
     gender:String,

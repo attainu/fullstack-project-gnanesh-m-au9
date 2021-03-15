@@ -36,7 +36,7 @@ router.post('/login',(req,res)=>{
             return res.status(400).send({"message":'Invalid REGISTRATION NUMBER'});
         }else{
             var isValidPassword = bcrypt.compareSync(req.body.data.password,data.password)
-            if(!isValidPassword) return res.status(400).send("Invalid Password")
+            if(!isValidPassword) return res.status(400).send({"message":"Invalid Password"})
             // generating tokens using userid,secret,expiretime
             var token = jwt.sign({id:data._id},config.secret,{expiresIn:86400});
             return res.send({token:token,admindata:data})
@@ -76,7 +76,6 @@ router.post('/addstudent',(req,res)=>{
     if(!token) return res.send({message:'No token Provided'})
     jwt.verify(token,config.secret,(err,data)=>{
         if(err) return res.status(500).send({'message':'Invalid token'})
-        
         Student.findOne({regNo:req.body.data.regNo},(err,data)=>{
             if(err) return res.status(400).send({'message':'cannot add student'})
             if(data) return res.status(400).send({'message':'student with given ID is already present'})
@@ -91,11 +90,11 @@ router.post('/addstudent',(req,res)=>{
                 gender:req.body.data.gender,
                 collegeCode:req.body.data.collegeCode
             },(err,data)=>{
-                if(err) return res.status(500).send({'error':'cannot add Student'})
-                return res.send({message:'New Student added'})
+                if(err) return res.status(500).send({'message':'cannot add Student'})
+                return res.send({'message':'New Student added'})
             })
         })
-    }) 
+    })
 })
 
 // get students
