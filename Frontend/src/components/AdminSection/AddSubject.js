@@ -24,7 +24,11 @@ const AddSubject = () => {
             collegeCode:collegeCode
         }
         // console.log(studentdetails)
-         axios.post('http://localhost:5000/admin/addsubject',{data:subjectdetails})
+         axios.post('http://localhost:5000/admin/addsubject',{data:subjectdetails},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+         })
         .then((res)=>{
             alert('New Subject Added Succesfuly');
             history.push('/adminprofile');

@@ -7,16 +7,23 @@ import axios from 'axios';
 const GetStudent = () => {
     const [branch,setbranch]=useState();
     const [faculty,setfaculty]=useState();
+    const [errormessage,seterrormessage]=useState();
 
     const submitValues=()=>{
         const details={
             branch:branch,
         }
         // console.log(branch)
-        axios.post('http://localhost:5000/admin/facultylist', {data:details})
+        axios.post('http://localhost:5000/admin/facultylist', {data:details},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+        })
         .then((res)=>{
-            // console.log(res.data)
             setfaculty(res.data)
+        })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
         })
     }
     return(
@@ -24,6 +31,7 @@ const GetStudent = () => {
        <AdminHeader/>
        <br/>
        <Container>
+           <h3 style={{color:"red"}}>{errormessage}</h3>
             <Row>
                 <Col sm={3}>
                     <Form>

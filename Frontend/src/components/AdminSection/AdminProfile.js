@@ -15,6 +15,7 @@ const AdminProfile = () => {
     const[collegeCode,setcollegeCode]=useState();
     const[profilepic,setprofilepic]=useState();
     const[uploadedPic,setuploadedPic]=useState();
+    const[errormessage,seterrormessage]=useState();
 
     
     useEffect(()=>{
@@ -54,9 +55,16 @@ const AdminProfile = () => {
             collegeCode:collegeCode,
             // uploadedPic:uploadedPic
         }
-        await axios.put('http://localhost:5000/admin/updateadmin',adminUpdatedDetails)
+        await axios.put('http://localhost:5000/admin/updateadmin',adminUpdatedDetails,{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+        })
         .then((res)=>{
             window.location.reload();
+        })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
         })
     }
 
@@ -67,13 +75,16 @@ const AdminProfile = () => {
         data.append('adminpic',uploadedPic)
         data.append('regNo',regNo)
         // console.log(data)
-        axios.post('http://localhost:5000/admin/updateadminpic',data)
+        axios.post('http://localhost:5000/admin/updateadminpic',data,{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+        })
         .then((res)=>{
-            console.log(res)
             setprofilepic(res.data.results.avatar)
         })
         .catch((err)=>{
-            console.log(err)
+            seterrormessage(err.response.data.message)
         })
     }
 
@@ -84,6 +95,8 @@ const AdminProfile = () => {
             <br/>
             <br/>
                 <center>
+                <h3 style={{color:"red"}}>{errormessage}</h3>
+                <br/>
                  <Row>
                      <Col sm={5} style={{marginLeft:'4rem'}} >
                          <center>
@@ -136,7 +149,9 @@ const AdminProfile = () => {
                 </center>
                 <Modal show={show} onHide={handleClose}>
                  <Modal.Header closeButton>
-                 <Modal.Title>Update Profile Info</Modal.Title>
+                 <Modal.Title>Update Profile Info
+                    <h3 style={{color:"red"}}>{errormessage}</h3>
+                </Modal.Title>
                  </Modal.Header>
 
                  <Modal.Body>
@@ -144,11 +159,6 @@ const AdminProfile = () => {
                          <Form.Group>
                              <Form.Label>Admin Reg Number</Form.Label>
                              <Form.Control type="text" value={regNo} readOnly />
-                         </Form.Group> 
-
-                         <Form.Group>
-                            <Form.Label>Profile Pic</Form.Label>
-                            <input type="file" name="adminpic" style={{cursor:"pointer"}} onChange={(e)=>setuploadedPic(e.target.files[0])} />
                          </Form.Group> 
 
                          <Form.Group>

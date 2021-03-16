@@ -6,12 +6,20 @@ import axios from 'axios';
 
 const GetAdmin = () => {
     const [admins,setadmins]=useState();
+    const[errormessage,seterrormessage]=useState();
 
     useEffect(()=>{
-        axios.get('http://localhost:5000/admin/adminslist')
+        axios.get('http://localhost:5000/admin/adminslist',{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+        })
         .then((res)=>{
             console.log(res.data)
             setadmins(res.data)
+        })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
         })
     },[]);
 
@@ -21,9 +29,8 @@ const GetAdmin = () => {
        <br/>
        <Container>
             <Row>
-                <Col sm={3}>
-                </Col>
-                <Col sm={8}>
+            <h3 style={{color:"red"}}>{errormessage}</h3>
+                <Col sm={10}>
                     <AdminDisplay adminList={admins}/>
                 </Col>
             </Row>

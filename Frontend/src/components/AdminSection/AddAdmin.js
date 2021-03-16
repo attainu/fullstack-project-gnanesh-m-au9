@@ -24,7 +24,11 @@ const AddAdmin = () => {
             collegeCode:collegeCode
         }
         // console.log(studentdetails)
-         axios.post('http://localhost:5000/admin/addadmin',{data:admindetails})
+         axios.post('http://localhost:5000/admin/addadmin',{data:admindetails},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+         })
         .then((res)=>{
             alert('New Admin Added Succesfuly');
             history.push('/adminprofile');

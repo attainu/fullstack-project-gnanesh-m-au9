@@ -8,16 +8,25 @@ const GetSubject = () => {
     const [sem,setsem]=useState();
     const [branch,setbranch]=useState();
     const [subjects,setsubjects]=useState();
+    const [errormessage,seterrormessage]=useState();
 
     const submitValues=()=>{
         const details={
             branch:branch,
             sem:sem
         }
-        axios.post('http://localhost:5000/admin/subjectlist', {data:details})
+        axios.post('http://localhost:5000/admin/subjectlist', {data:details},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+        })
         .then((res)=>{
             // console.log(res.data)
             setsubjects(res.data)
+        })
+        .catch((err)=>{
+            seterrormessage(err.response.data.message)
+            // console.log(err.response)
         })
     }
     return(
@@ -25,6 +34,7 @@ const GetSubject = () => {
        <AdminHeader/>
        <br/>
        <Container>
+           <h3 style={{color:"red"}}>{errormessage}</h3>
             <Row>
                 <Col sm={3}>
                     <Form>

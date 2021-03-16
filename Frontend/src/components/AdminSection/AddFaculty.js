@@ -28,7 +28,11 @@ const AddFaculty = () => {
             collegeCode:collegeCode
         }
         // console.log(studentdetails)
-         axios.post('http://localhost:5000/admin/addfaculty',{data:facultydetails})
+         axios.post('http://localhost:5000/admin/addfaculty',{data:facultydetails},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+         })
         .then((res)=>{
             alert('New Faculty Added Succesfuly');
             history.push('/adminprofile');

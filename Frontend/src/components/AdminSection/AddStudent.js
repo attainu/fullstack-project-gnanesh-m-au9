@@ -30,7 +30,11 @@ const AddStudent = () => {
             collegeCode:collegeCode
         }
         // console.log(studentdetails)
-         axios.post('http://localhost:5000/admin/addstudent',{data:studentdetails})
+         axios.post('http://localhost:5000/admin/addstudent',{data:studentdetails},{
+            headers:{
+                'x-access-token':sessionStorage.getItem('token')
+            }
+         })
         .then((res)=>{
             alert('New Student Added Succesfuly');
             history.push('/adminprofile');
