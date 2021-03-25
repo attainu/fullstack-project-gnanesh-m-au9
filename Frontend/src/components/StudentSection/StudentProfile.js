@@ -1,21 +1,24 @@
-import AdminHeader from './AdminHeader';
-import { Container,Card, Button, Table, Form, Modal } from 'react-bootstrap';
+import StudentHeader from './StudentHeader';
+import { Container, Card, Button, Table, Form, Modal } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DefaultUserPic from "../uploads/avatar.png";
-import './profileAdmin.css'
+import '../AdminSection/profileAdmin.css'
 
-const AdminProfile = () => {
+const StudentProfile = () => {
 
-    const adminregNo = JSON.parse(sessionStorage.getItem('adminregNo'))
+    // while getting values from session storage parse it
+    const studentregNo = JSON.parse(sessionStorage.getItem('studentregNo'))
 
-    const [regNo] = useState(adminregNo);
+    const [regNo] = useState(studentregNo);
     const [name, setname] = useState();
     const [dob, setdob] = useState();
     const [branch, setbranch] = useState();
+    const [gender, setgender] = useState();
     const [collegeCode, setcollegeCode] = useState();
     const [profilepic, setprofilepic] = useState();
     const [uploadedPic, setuploadedPic] = useState();
+    const [sem, setsem] = useState();
     const [errormessage, seterrormessage] = useState();
 
     const [oldpassword, setoldpassword] = useState();
@@ -25,34 +28,36 @@ const AdminProfile = () => {
     const [verifiedpath, setverifiedpath] = useState(DefaultUserPic);
 
     useEffect(() => {
-        axios.get(`https://collegemanage.herokuapp.com/admin/adminbyid/${regNo}`)
+        axios.get(`https://collegemanage.herokuapp.com/student/studentbyid/${regNo}`)
             .then((res) => {
                 setname(res.data.name)
                 setdob(res.data.dob)
                 setbranch(res.data.branch)
                 setcollegeCode(res.data.collegeCode)
                 setprofilepic(res.data.avatar)
+                setgender(res.data.gender)
+                setsem(res.data.sem)
             })
     }, []);
 
     // if profile pic is not there, it will get default profile pic
     // making api call to check if image path exists in backend
     if (profilepic) {
-        var AdminProfilPic = "https://collegemanage.herokuapp.com" + profilepic;
+        var StudentProfilPic = "https://collegemanage.herokuapp.com" + profilepic;
 
         const user = {
             imagepath: profilepic
         }
-        axios.post('https://collegemanage.herokuapp.com/admin/checkpathexists', user)
+        axios.post('https://collegemanage.herokuapp.com/faculty/checkpathexists', user)
             .then((res) => {
-                setverifiedpath(AdminProfilPic)
+                setverifiedpath(StudentProfilPic)
             })
             .catch((err) => {
                 setverifiedpath(DefaultUserPic);
             })
     }
 
-    // handle profile update Modal
+    // handle Student profile update Modal
     const [show, setShow] = useState(false);
     const handleClose = () => {
         setShow(false);
@@ -74,17 +79,16 @@ const AdminProfile = () => {
     // Submitting Profile Update details
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const adminUpdatedDetails = {
+        const studentUpdatedDetails = {
             regNo: regNo,
             name: name,
             dob: dob,
-            branch: branch,
-            collegeCode: collegeCode,
+            gender: gender
             // uploadedPic:uploadedPic
         }
-        await axios.put('https://collegemanage.herokuapp.com/admin/updateadmin', adminUpdatedDetails, {
+        await axios.put('https://collegemanage.herokuapp.com/student/updatestudent', studentUpdatedDetails, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('studenttoken')
             }
         })
             .then((res) => {
@@ -100,12 +104,12 @@ const AdminProfile = () => {
         event.preventDefault();
         // console.log(profilepic)
         const data = new FormData();
-        data.append('adminpic', uploadedPic)
+        data.append('studentpic', uploadedPic)
         data.append('regNo', regNo)
         // console.log(data)
-        await axios.post('https://collegemanage.herokuapp.com/admin/updateadminpic', data, {
+        await axios.post('https://collegemanage.herokuapp.com/student/updatestudentpic', data, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('studenttoken')
             }
         })
             .then((res) => {
@@ -125,9 +129,9 @@ const AdminProfile = () => {
             oldpassword: oldpassword,
             newpassword: newpassword
         }
-        axios.put('https://collegemanage.herokuapp.com/admin/adminupdatepassword', passwordDetails, {
+        axios.put('https://collegemanage.herokuapp.com/student/studentupdatepassword', passwordDetails, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('studenttoken')
             }
         })
             .then((res) => {
@@ -140,17 +144,17 @@ const AdminProfile = () => {
     }
     return (
         <div className='admincontainer'>
-            <AdminHeader />
-            <Container  >
+            <StudentHeader />
+            <Container>
                 <br />
                 <br />
                 <center>
-                    <h3 style={{ color: 'lightyellow' }}>Hi {name}, Welcome to Admin Dashboard!!</h3>
+                    <h3 style={{ color: 'white' }}>Hi {name}, Welcome to Student Dashboard!!</h3>
                     <h3 style={{ color: "red" }}>{errormessage}</h3>
                     <br />
                     <Container className="adminprofileData">
                         <center>
-                            <Card style={{width:'18rem',backgroundColor:'Gray',color:'white'}}>
+                            <Card style={{ width: '17rem', backgroundColor: 'Gray',color:'whitesmoke' }}>
                                 <Card.Header>Profile Picture</Card.Header>
                                 <Card.Body>
                                     <img src={verifiedpath} width="100%" height="100%" alt="avatar" />
@@ -165,24 +169,31 @@ const AdminProfile = () => {
                             </Card>
                         </center>
 
-                        <Table striped className='tabledata'>
+                        <Table striped  className='tabledata'>
                             <tbody style={{color:'whitesmoke'}}>
-                                <tr>
-                                    <td colSpan="2">Name</td>
-                                    <td>{name}</td>
-                                </tr>
-
                                 <tr>
                                     <td colSpan="2">Reg Number</td>
                                     <td>{regNo}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="2">Name</td>
+                                    <td>{name}</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="2">DOB</td>
                                     <td>{dob}</td>
                                 </tr>
                                 <tr>
+                                    <td colSpan="2">Gender</td>
+                                    <td>{gender}</td>
+                                </tr>
+                                <tr>
                                     <td colSpan="2">Branch</td>
                                     <td>{branch}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="2">Sem</td>
+                                    <td>{sem}</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="2">College Code</td>
@@ -206,7 +217,7 @@ const AdminProfile = () => {
                     <Modal.Body>
                         <Form onSubmit={handleSubmit}>
                             <Form.Group>
-                                <Form.Label>Admin Reg Number</Form.Label>
+                                <Form.Label>Student Reg Number</Form.Label>
                                 <Form.Control type="text" value={regNo} readOnly />
                             </Form.Group>
 
@@ -221,13 +232,22 @@ const AdminProfile = () => {
                             </Form.Group>
 
                             <Form.Group>
+                                <Form.Label>Gender</Form.Label>
+                                <select className="form-control" onChange={(e) => setgender(e.target.value)} >
+                                    <option>----SELECT GENDER-----</option>
+                                    <option value="M">M</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </Form.Group>
+
+                            <Form.Group>
                                 <Form.Label>Branch</Form.Label>
-                                <Form.Control type="text" value={branch} onChange={(e) => setbranch(e.target.value)} />
+                                <Form.Control type="text" value={branch} onChange={(e) => setbranch(e.target.value)} readOnly />
                             </Form.Group>
 
                             <Form.Group>
                                 <Form.Label>College Code</Form.Label>
-                                <Form.Control type="text" value={collegeCode} onChange={(e) => setcollegeCode(e.target.value)} />
+                                <Form.Control type="text" value={collegeCode} onChange={(e) => setcollegeCode(e.target.value)} readOnly />
                             </Form.Group>
 
                             <Button type="submit" variant="success">
@@ -272,4 +292,4 @@ const AdminProfile = () => {
         </div>
     )
 }
-export default AdminProfile;
+export default StudentProfile;

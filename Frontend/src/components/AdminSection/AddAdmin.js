@@ -1,68 +1,68 @@
 import AdminHeader from './AdminHeader';
-import {Form,Container,Row,Col,Button} from 'react-bootstrap';
-import {useState} from 'react';
+import { Form, Container,Button } from 'react-bootstrap';
+import { useState } from 'react';
 import axios from 'axios';
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const AddAdmin = () => {
-    const [name,setname]=useState();
-    const [regNo,setregNo]=useState();
-    const [dob,setdob]=useState();
-    const [branch,setbranch]=useState();
-    const [collegeCode,setcollegeCode]=useState();
-    const[errormessage,seterrormessage]=useState();
+    const [name, setname] = useState();
+    const [regNo, setregNo] = useState();
+    const [dob, setdob] = useState();
+    const [branch, setbranch] = useState();
+    const [collegeCode, setcollegeCode] = useState();
+    const [errormessage, seterrormessage] = useState();
 
-   let history = useHistory();
+    let history = useHistory();
 
-    const submitHandler=(event)=>{
+    const submitHandler = async (event) => {
         event.preventDefault();
-        const admindetails={
-            name:name,
-            regNo:regNo,
-            dob:dob,
-            branch:branch,
-            collegeCode:collegeCode
+        const admindetails = {
+            name: name,
+            regNo: regNo,
+            dob: dob,
+            branch: branch,
+            collegeCode: collegeCode
         }
         // console.log(studentdetails)
-         axios.post('http://localhost:5000/admin/addadmin',{data:admindetails},{
-            headers:{
-                'x-access-token':sessionStorage.getItem('token')
+        await axios.post('https://collegemanage.herokuapp.com/admin/addadmin', admindetails, {
+            headers: {
+                'x-access-token': sessionStorage.getItem('admintoken')
             }
-         })
-        .then((res)=>{
-            alert('New Admin Added Succesfuly');
-            history.push('/adminprofile');
         })
-        .catch((err)=>{
-            seterrormessage(err.response.data.message)
-        })
+            .then((res) => {
+                alert('New Admin Added Succesfuly');
+                history.goBack()
+            })
+            .catch((err) => {
+                seterrormessage(err.response.data.message)
+            })
     }
 
-    return(
-        <>
-        <AdminHeader/>
-        <Container>
-        <h1>Add Subject</h1>
-        <br/>
-        <h2 style={{color:"red"}}>{errormessage}</h2>
-        <Form onSubmit={submitHandler}>
-            <Row>
-                <Col sm={5}>
-                    <Form.Group>
-                            <Form.Label>Admin Name</Form.Label>
-                            <Form.Control type="text" placeholder="Admin Name" onChange={(e)=>setname(e.target.value)} />
-                    </Form.Group> 
-                    <Form.Group>
-                            <Form.Label>Enter Registration Number</Form.Label>
-                            <Form.Control type="text" placeholder="Subject Name" onChange={(e)=>setregNo(e.target.value)} />
-                    </Form.Group> 
-                    <Form.Group>
-                            <Form.Label>Enter DOB</Form.Label>
-                            <Form.Control type="date"  onChange={(e)=>setdob(e.target.value)} />
-                    </Form.Group> 
-                    <Form.Group>
-                            <Form.Label>Select Branch:</Form.Label>
-                                <select className="form-control" onChange={(e)=>setbranch(e.target.value)}>
+    return (
+        <div className="addstudentdata">
+            <AdminHeader />
+            <Container>
+                <center><h1 style={{ color: 'lightyellow' }}>Add Admin</h1></center>
+                <br />
+                <h2 style={{ color: "red" }}>{errormessage}</h2>
+                <Form onSubmit={submitHandler}>
+                    <div className='studentinfo'>
+                        <div className="studentflex">
+                            <Form.Group>
+                                <Form.Label style={{ color: 'white' }}>Admin Name</Form.Label>
+                                <Form.Control type="text" placeholder="Admin Name" onChange={(e) => setname(e.target.value)} />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label style={{ color: 'white' }}>Enter Registration Number</Form.Label>
+                                <Form.Control type="text" placeholder="Subject Name" onChange={(e) => setregNo(e.target.value)} />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label style={{ color: 'white' }}>Enter DOB</Form.Label>
+                                <Form.Control type="date" onChange={(e) => setdob(e.target.value)} />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label style={{ color: 'white' }}>Select Branch:</Form.Label>
+                                <select className="form-control" onChange={(e) => setbranch(e.target.value)}>
                                     <option>----SELECT BRANCH-----</option>
                                     <option value="GEN">GEN</option>
                                     <option value="CSE">CSE</option>
@@ -70,21 +70,22 @@ const AddAdmin = () => {
                                     <option value="CIVIL">CIVIL</option>
                                     <option value="EC">ECE</option>
                                 </select>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>College Code:</Form.Label>
-                            {/* by default values from option will be string, we use parseInt to convert to Integer */}
-                            <select className="form-control" id="sem" onChange={(e)=>setcollegeCode(e.target.value)}>
-                                <option>----SELECT COLLEGE CODE-----</option>
-                                <option value="ATT">ATT</option>
-                            </select>
-                    </Form.Group>
-                    <Button type="submit">Add Admin</Button>
-                </Col>
-            </Row>
-        </Form>
-        </Container>
-        </>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label style={{ color: 'white' }}>College Code:</Form.Label>
+                                {/* by default values from option will be string, we use parseInt to convert to Integer */}
+                                <select className="form-control" id="sem" onChange={(e) => setcollegeCode(e.target.value)}>
+                                    <option>----SELECT COLLEGE CODE-----</option>
+                                    <option value="ATT">ATT</option>
+                                </select>
+                            </Form.Group>
+
+                        </div>
+                    </div>
+                    <center><Button type="submit">Add Admin</Button></center>
+                </Form>
+            </Container>
+        </div>
     )
 }
 export default AddAdmin;

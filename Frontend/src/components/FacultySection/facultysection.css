@@ -1,0 +1,15 @@
+.facultycard {
+  width: 23rem;
+  /* width: 100px;
+  height: 100px; */
+  background-color: gray;
+}
+
+.facultyprofileData {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabledata {
+  height: 400px;
+}

@@ -1,0 +1,119 @@
+/* admin profile */
+ .admincontainer {
+   min-height: 100vh;
+  background-image: url(https://images.pexels.com/photos/333850/pexels-photo-333850.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+ } 
+
+.adminprofileData {
+  display: flex;
+  /* padding: 10px;
+  margin: 10px; */
+}
+
+.tabledata {
+  height: 455px;
+  margin-left: 20px;
+  border-radius: 1%;
+  /* display: flex;
+  flex-direction: column; */
+  align-self: center;
+}
+.admincard {
+  width: 23rem;
+  background-color: skyblue;
+  /* padding: 10px;
+  margin: 10px; */
+}
+
+.adminupdate {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* add student data */
+.getstudentdata {
+  min-height: 100vh;
+  background-image: url(https://images.pexels.com/photos/333850/pexels-photo-333850.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.addstudentdata {
+  min-height: 100vh;
+  background-image: url(https://images.pexels.com/photos/333850/pexels-photo-333850.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+.studentinfo {
+  display: flex;
+  justify-content: center;
+}
+.studentflex {
+  padding: 20px;
+}
+
+.facultydata {
+  display: flex;
+}
+.getstudentinfo {
+  display: flex;
+  justify-content: space-between;
+}
+.studentflex1 {
+  padding: 20px;
+}
+.studentflex2 {
+  padding: 20px;
+  width: 800px;
+  overflow-x: auto;
+}
+.adminflex2 {
+  width: 100%;
+  overflow-x: auto;
+}
+.trial {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .adminprofileData {
+    flex-direction: column;
+  }
+  .admincard {
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .tabledata {
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+
+  .studentinfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .studentflex2 {
+    width: 460px;
+    overflow-x: auto;
+  }
+  .adminflex2 {
+    width: 460px;
+    overflow-x: auto;
+  }
+
+  .trial {
+    width: auto;
+    overflow-x: auto;
+  }
+}

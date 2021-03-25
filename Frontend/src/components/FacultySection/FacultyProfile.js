@@ -1,15 +1,15 @@
-import AdminHeader from './AdminHeader';
+import FacultyHeader from './FacultyHeader';
 import { Container,Card, Button, Table, Form, Modal } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DefaultUserPic from "../uploads/avatar.png";
-import './profileAdmin.css'
+import '../AdminSection/profileAdmin.css'
 
-const AdminProfile = () => {
+const FacultyProfile = () => {
 
-    const adminregNo = JSON.parse(sessionStorage.getItem('adminregNo'))
+    const facultyregNo = JSON.parse(sessionStorage.getItem('facultyregNo'))
 
-    const [regNo] = useState(adminregNo);
+    const [regNo] = useState(facultyregNo);
     const [name, setname] = useState();
     const [dob, setdob] = useState();
     const [branch, setbranch] = useState();
@@ -25,7 +25,7 @@ const AdminProfile = () => {
     const [verifiedpath, setverifiedpath] = useState(DefaultUserPic);
 
     useEffect(() => {
-        axios.get(`https://collegemanage.herokuapp.com/admin/adminbyid/${regNo}`)
+        axios.get(`https://collegemanage.herokuapp.com/faculty/facultybyid/${regNo}`)
             .then((res) => {
                 setname(res.data.name)
                 setdob(res.data.dob)
@@ -38,14 +38,14 @@ const AdminProfile = () => {
     // if profile pic is not there, it will get default profile pic
     // making api call to check if image path exists in backend
     if (profilepic) {
-        var AdminProfilPic = "https://collegemanage.herokuapp.com" + profilepic;
+        var FacultyProfilPic = "https://collegemanage.herokuapp.com" + profilepic;
 
         const user = {
             imagepath: profilepic
         }
-        axios.post('https://collegemanage.herokuapp.com/admin/checkpathexists', user)
+        axios.post('https://collegemanage.herokuapp.com/faculty/checkpathexists', user)
             .then((res) => {
-                setverifiedpath(AdminProfilPic)
+                setverifiedpath(FacultyProfilPic)
             })
             .catch((err) => {
                 setverifiedpath(DefaultUserPic);
@@ -74,17 +74,16 @@ const AdminProfile = () => {
     // Submitting Profile Update details
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const adminUpdatedDetails = {
+        const facultyUpdatedDetails = {
             regNo: regNo,
             name: name,
             dob: dob,
             branch: branch,
             collegeCode: collegeCode,
-            // uploadedPic:uploadedPic
         }
-        await axios.put('https://collegemanage.herokuapp.com/admin/updateadmin', adminUpdatedDetails, {
+        await axios.put('https://collegemanage.herokuapp.com/faculty/updatefaculty', facultyUpdatedDetails, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('facultytoken')
             }
         })
             .then((res) => {
@@ -100,19 +99,20 @@ const AdminProfile = () => {
         event.preventDefault();
         // console.log(profilepic)
         const data = new FormData();
-        data.append('adminpic', uploadedPic)
+        data.append('facultypic', uploadedPic)
         data.append('regNo', regNo)
         // console.log(data)
-        await axios.post('https://collegemanage.herokuapp.com/admin/updateadminpic', data, {
+        await axios.post('https://collegemanage.herokuapp.com/faculty/updatefacultypic', data, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('facultytoken')
             }
         })
             .then((res) => {
                 setprofilepic(res.data.results.avatar)
             })
             .catch((err) => {
-                seterrormessage('cannot update profile picture');
+                console.log(err)
+                seterrormessage('cannot update Profile Picture')
                 return;
             })
     }
@@ -125,9 +125,9 @@ const AdminProfile = () => {
             oldpassword: oldpassword,
             newpassword: newpassword
         }
-        axios.put('https://collegemanage.herokuapp.com/admin/adminupdatepassword', passwordDetails, {
+        axios.put('https://collegemanage.herokuapp.com/facultyupdatepassword', passwordDetails, {
             headers: {
-                'x-access-token': sessionStorage.getItem('admintoken')
+                'x-access-token': sessionStorage.getItem('facultytoken')
             }
         })
             .then((res) => {
@@ -140,42 +140,41 @@ const AdminProfile = () => {
     }
     return (
         <div className='admincontainer'>
-            <AdminHeader />
-            <Container  >
+            <FacultyHeader />
+            <Container>
                 <br />
                 <br />
                 <center>
-                    <h3 style={{ color: 'lightyellow' }}>Hi {name}, Welcome to Admin Dashboard!!</h3>
+                    <center><h3 style={{ color: 'lightyellow' }}>Hi {name}, Welcome to Faculty Dashboard!!</h3></center>
                     <h3 style={{ color: "red" }}>{errormessage}</h3>
                     <br />
                     <Container className="adminprofileData">
                         <center>
-                            <Card style={{width:'18rem',backgroundColor:'Gray',color:'white'}}>
+                            <Card  style={{ width: '18rem', backgroundColor: 'Gray',color:'whitesmoke' }}>
                                 <Card.Header>Profile Picture</Card.Header>
                                 <Card.Body>
                                     <img src={verifiedpath} width="100%" height="100%" alt="avatar" />
                                 </Card.Body>
                                 <Card.Footer>
                                     <Form onSubmit={submitProfilePic} enctype="multipart/form-data" >
-                                        <input type="file" name="adminpic" style={{ cursor: "pointer" }} onChange={(e) => setuploadedPic(e.target.files[0])} />
+                                        <input type="file" name="facultypic" style={{ cursor: "pointer" }} onChange={(e) => setuploadedPic(e.target.files[0])} />
                                         <br /><br />
                                         <Button type="submit">Update Pic</Button>
                                     </Form>
                                 </Card.Footer>
                             </Card>
                         </center>
-
-                        <Table striped className='tabledata'>
+                        <Table striped  className='tabledata'>
                             <tbody style={{color:'whitesmoke'}}>
+                                <tr>
+                                    <td colSpan="2">Reg Number</td>
+                                    <td>{regNo}</td>
+                                </tr>
                                 <tr>
                                     <td colSpan="2">Name</td>
                                     <td>{name}</td>
                                 </tr>
 
-                                <tr>
-                                    <td colSpan="2">Reg Number</td>
-                                    <td>{regNo}</td>
-                                </tr>
                                 <tr>
                                     <td colSpan="2">DOB</td>
                                     <td>{dob}</td>
@@ -272,4 +271,4 @@ const AdminProfile = () => {
         </div>
     )
 }
-export default AdminProfile;
+export default FacultyProfile;
